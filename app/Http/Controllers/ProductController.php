@@ -27,6 +27,25 @@ class ProductController extends Controller
         // Returning to a view path that matches the provided Blade snippet context
         return view('dashboard.user-dashboard.user', ['products' => $products, 'categories' => $categories]);
     }
+     /**
+     * Public-facing menu — browsable by guests and logged-in users alike.
+     * Reuses the same customer-facing view as userIndex().
+     */
+    // public function menu()
+    // {
+    //     $products = Product::with('category')->latest()->get();
+    //     $categories = Category::orderBy('name')->get();
+ 
+    //     return view('dashboard.user-dashboard.user', ['products' => $products, 'categories' => $categories]);
+    // }
+    //  /**
+    //  * Single product detail page, publicly viewable.
+    //  * {$product} is auto-resolved via route-model binding.
+    //  *
+    // public function show(Product $product)
+    // {
+    //     return view('menu.show', compact('product'));
+    // }
 
     public function store(Request $request)
     {
