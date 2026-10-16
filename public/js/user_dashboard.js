@@ -32,10 +32,10 @@ class CoffeeShop {
     })
 
     // Pay now button
-    const payNowBtn = document.getElementById("payNowBtn")
-    if (payNowBtn) {
-      payNowBtn.addEventListener("click", () => this.handlePayment())
-    }
+    // const payNowBtn = document.getElementById("payNowBtn")
+    // if (payNowBtn) {
+    //   payNowBtn.addEventListener("click", () => this.handlePayment())
+    // }
 
     // Search functionality
     const searchInput = document.querySelector(".search-input")
@@ -191,17 +191,18 @@ class CoffeeShop {
     const total = this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0) * (1 + this.taxRate)
 
     // Show payment animation
-    const payBtn = document.getElementById("payNowBtn")
-    payBtn.textContent = "Processing..."
-    payBtn.disabled = true
+    // const payBtn = document.getElementById("payNowBtn")
+    // payBtn.textContent = "Processing..."
+    // payBtn.disabled = true
 
-    setTimeout(() => {
-      alert(`Payment successful! Total: $${total.toFixed(2)}\n\nThank you for your order!`)
-      this.cart = []
-      this.updateCart()
-      payBtn.textContent = "Pay Now"
-      payBtn.disabled = false
-    }, 1500)
+    // setTimeout(() => {
+    //   alert(`Payment successful! Total: $${total.toFixed(2)}\n\nThank you for your order!`)
+    //   this.cart = []
+    //   this.updateCart()
+    //   payBtn.textContent = "Pay Now"
+    //   payBtn.disabled = false
+    // }, 1500)
+   
   }
 
   handleSearch(e) {

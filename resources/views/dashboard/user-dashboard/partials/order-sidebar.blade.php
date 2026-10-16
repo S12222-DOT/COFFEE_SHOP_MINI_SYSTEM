@@ -1,4 +1,4 @@
-<div class="order-sidebar">
+{{-- <div class="order-sidebar">
     <h2 class="order-title">Order</h2>
     
     <div class="order-items" id="orderItems">
@@ -27,4 +27,8 @@
             Pay Now
         </button>
     </div>
-</div>
+</div> --}}
+<form action="{{ route('order.place') }}" method="POST">
+    @csrf
+    <button type="submit" class="btn btn-primary w-100">Pay Now</button>
+</form>

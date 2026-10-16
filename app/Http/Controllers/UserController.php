@@ -85,13 +85,13 @@ class UserController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
         $user=User::find($id);
         return view('admin.customers.index',compact('user')); 
     }
 
-    public function update(Request $req, $id)
+    public function update(Request $req, int $id)
     {
         $user=User::find($id);
         if (!$user) {
@@ -113,7 +113,7 @@ class UserController extends Controller
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully.'); 
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $user=User::find($id);
         if ($user) {

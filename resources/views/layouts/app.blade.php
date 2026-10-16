@@ -13,6 +13,7 @@
     {{-- Custom Styles --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -27,7 +28,7 @@
             {{-- Main Content Section --}}
             <main class="container-fluid py-4 px-4 px-lg-5">
                 @yield('content') 
-            </main>
+            </main> 
         </div>
     </div>
 

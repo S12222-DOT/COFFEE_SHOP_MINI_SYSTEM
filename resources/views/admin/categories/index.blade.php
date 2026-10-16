@@ -228,8 +228,8 @@
         const addCategoryBtn = document.getElementById('add-category-btn');
 
         // Base URL for categories (adjust if your dashboard path is different)
-        // This is used to construct the PUT route for editing: /dashboard/categories/{id}
-        const categoriesBaseUrl = '{{ url("dashboard/categories") }}'; 
+        // This is used to construct the PUT route for editing: /admin/categories/{id}
+        const categoriesBaseUrl = '{{ url("admin/categories") }}';
 
         // Function to reset the form for "Add New Category"
         function resetForm() {
@@ -258,7 +258,7 @@
 
                 modalTitle.textContent = `Edit: ${name}`;
                 
-                // Set form action for PUT request (e.g., /dashboard/categories/1)
+                // Set form action for PUT request (e.g., /admin/categories/1)
                 form.action = `${categoriesBaseUrl}/${id}`; 
                 formMethod.value = 'PUT'; 
 

@@ -156,7 +156,9 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.order_management', compact('orders'));
+           
+            return view('admin.orders.index', compact('orders'));
+        // return view('admin.order_management', compact('orders'));
     }
 
     public function updateStatus(Request $request, Order $order)

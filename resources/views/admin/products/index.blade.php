@@ -296,7 +296,7 @@
         const imageUploadInput = document.getElementById('image-upload');
         const defaultPlaceholder = 'https://i.pinimg.com/736x/9c/83/bc/9c83bc3ef5c1431c52433715936c7a03.jpg';
 
-        const productsBaseUrl = '{{ url("products") }}'; // Using 'products' route name prefix for generality
+        const productsBaseUrl = '{{ url("admin/products") }}'; // Using 'products' route name prefix for generality
         const storeRoute = '{{ route("products.store") }}';
 
         function resetForm() {

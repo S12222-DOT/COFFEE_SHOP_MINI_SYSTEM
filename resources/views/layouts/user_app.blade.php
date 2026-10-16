@@ -15,7 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">   --}}
+    <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">  
+    
     
     @stack('styles')
 </head>
@@ -32,3 +34,4 @@
     @stack('scripts')
 </body>
 </html>
+ 

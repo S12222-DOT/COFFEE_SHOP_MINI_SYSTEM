@@ -1,5 +1,4 @@
 @extends('layouts.user_app')
-
 {{-- Vibe Check: Less 'Order Now,' more 'What's the Sitch?' --}}
 @section('title', 'Perk Up Coffee - Tap In & Order')
 @section('content')

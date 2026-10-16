@@ -37,6 +37,7 @@
         padding: 10px 15px;
         border-color: #e0e0e0;
     }
+    
 </style>
 
 <!-- Logout Modal -->
