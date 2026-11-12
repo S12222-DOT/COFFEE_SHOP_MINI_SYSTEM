@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\ProfileController;
@@ -111,7 +110,7 @@ Route::middleware('auth')->group(function () {
 | 4. Admin Management Routes (Requires login + Admin Role Check)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     
     // Admin Dashboard Homepage
     Route::get('/', function () {
@@ -145,4 +144,3 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
 
 require __DIR__.'/auth.php';
-

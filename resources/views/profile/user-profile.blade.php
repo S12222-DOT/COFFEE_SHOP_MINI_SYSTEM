@@ -57,10 +57,10 @@
             </div>
 
             @if (Route::has('logout'))
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-secondary rounded-pill px-4">Log out</button>
-                </form>
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                        data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    Log out
+                </button>
             @endif
         </div>
 
@@ -167,5 +167,32 @@
         </form>
     </div>
 </div>
+
+{{-- Logout confirmation --}}
+@if (Route::has('logout'))
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:20px;">
+            <div class="modal-body text-center p-4 position-relative">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <h5 class="fw-bold mb-2" id="logoutModalLabel">Are you sure you want to log out?</h5>
+                <p class="acc-hint mb-4">You will need to sign in again to see your account.</p>
+
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">Cancel</button>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn-brand">Yes, log out</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 @endsection
