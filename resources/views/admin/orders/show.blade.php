@@ -32,6 +32,6 @@
         </table>
     </div>
 </div>
-
+{{ $orders->links('pagination::bootstrap-5') }}
 <p class="text-end fs-5 fw-bold mt-3">Total: ${{ number_format($order->total_price, 2) }}</p>
 @endsection

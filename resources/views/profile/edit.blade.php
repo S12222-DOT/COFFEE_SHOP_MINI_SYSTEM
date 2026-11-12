@@ -25,5 +25,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</x-app-layout>
+    </div> --}}
+{{-- </x-app-layout>

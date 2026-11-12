@@ -2,81 +2,94 @@
 
 @section('content')
 
-<div class="container mx-auto px-4 py-8">
-<h1 class="text-4xl font-extrabold text-gray-900 mb-8 border-b pb-2">Order Management Dashboard</h1>
+<style>
+    .orders-page { padding: 8px 0 40px; }
+    .orders-page h1 { font-size: 2rem; font-weight: 800; margin-bottom: 20px; color: #2b2b2b; }
 
-<div class="bg-white shadow-xl rounded-lg overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-            @forelse ($orders as $order)
-                <tr class="hover:bg-gray-50 transition duration-150">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $order->id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $order->user->name ?? 'Guest User' }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $order->created_at->format('M d, Y H:i') }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">${{ number_format($order->total_price, 2) }}</td>
-                    
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        @php
-                            $color = [
-                                'Pending' => 'yellow', 
-                                'Processing' => 'blue', 
-                                'Shipped' => 'indigo', 
-                                'Delivered' => 'green',
-                                'Cancelled' => 'red'
-                            ][$order->status] ?? 'gray';
-                        @endphp
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $color }}-100 text-{{ $color }}-800">
-                            {{ $order->status }}
-                        </span>
-                    </td>
+    .orders-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); overflow: hidden; }
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em;
+                       color: #6b7280; background: #f9fafb; padding: 14px 20px; }
+    .orders-table td { padding: 16px 20px; border-top: 1px solid #f0f0f0; font-size: .9rem; color: #374151; vertical-align: middle; white-space: nowrap; }
+    .orders-table tr:hover td { background: #fcf7f8; }
 
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST" class="flex space-x-2 items-center">
-                            @csrf
-                            @method('PUT')
-                            
-                            <select name="status" class="form-select border-gray-300 rounded-md shadow-sm text-sm" required>
-                                <option value="Pending" {{ $order->status === 'Pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="Processing" {{ $order->status === 'Processing' ? 'selected' : '' }}>Processing</option>
-                                <option value="Shipped" {{ $order->status === 'Shipped' ? 'selected' : '' }}>Shipped</option>
-                                <option value="Delivered" {{ $order->status === 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                                <option value="Cancelled" {{ $order->status === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                            
-                            <button type="submit" class="bg-indigo-500 text-white p-2 rounded-md hover:bg-indigo-600 transition duration-150 text-xs font-semibold">
-                                Update
-                            </button>
-                            
-                            {{-- Link to view order details --}}
-                            <a href="#" class="text-gray-500 hover:text-indigo-600 p-2" title="View Details">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            </a>
-                        </form>
-                    </td>
-                </tr>
-            @empty
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: .75rem; font-weight: 700; }
+    .badge-pending    { background: #fef3c7; color: #92400e; }
+    .badge-processing { background: #dbeafe; color: #1e40af; }
+    .badge-shipped    { background: #e0e7ff; color: #3730a3; }
+    .badge-delivered  { background: #dcfce7; color: #166534; }
+    .badge-completed  { background: #dcfce7; color: #166534; }
+    .badge-cancelled  { background: #fee2e2; color: #991b1b; }
+
+    .status-form { display: flex; align-items: center; gap: 8px; }
+    .status-form select { padding: 7px 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: .85rem; background: #fff; }
+    .btn-update { background: #9b1c3f; color: #fff; border: none; padding: 8px 16px; border-radius: 8px;
+                  font-size: .8rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+    .btn-update:hover { background: #7d1633; }
+    .btn-view { display: inline-flex; padding: 6px; border-radius: 8px; color: #6b7280; }
+    .btn-view:hover { background: #f3f4f6; color: #9b1c3f; }
+    .btn-view svg { width: 20px; height: 20px; }
+
+    .flash { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: .9rem; }
+    .flash-success { background: #dcfce7; color: #166534; }
+    .flash-error   { background: #fee2e2; color: #991b1b; }
+    .empty-row { text-align: center; padding: 40px !important; color: #9ca3af; }
+</style>
+
+<div class="orders-page">
+    <h1>Order Management Dashboard</h1>
+
+    @if (session('success')) <div class="flash flash-success">{{ session('success') }}</div> @endif
+    @if (session('error'))   <div class="flash flash-error">{{ session('error') }}</div> @endif
+
+    <div class="orders-card">
+        <table class="orders-table">
+            <thead>
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-lg text-gray-500">No orders found.</td>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($orders as $order)
+                    @php $status = ucfirst(strtolower($order->status)); @endphp
+                    <tr>
+                        <td><strong>#{{ $order->id }}</strong></td>
+                        <td>{{ $order->user->name ?? 'Guest User' }}</td>
+                        <td>{{ $order->created_at->format('M d, Y H:i') }}</td>
+                        <td><strong>${{ number_format($order->total_price, 2) }}</strong></td>
+                        <td><span class="badge badge-{{ strtolower($status) }}">{{ $status }}</span></td>
+                        <td>
+                            <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST" class="status-form">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" required>
+                                    @foreach (['Pending', 'Completed', 'Cancelled'] as $option)
+                                        <option value="{{ $option }}" @selected($status === $option)>{{ $option }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn-update">Update</button>
+                                <a href="#" class="btn-view" title="View Details">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="6" class="empty-row">No orders found.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{ $orders->links('pagination::bootstrap-5') }} 
 </div>
 
-<div class="mt-6">
-    {{ $orders->links() }}
-</div>
-
-
-</div>
 @endsection

@@ -359,7 +359,7 @@
                 // Populate fields
                 productIdInput.value = id;
                 document.querySelector('#productModal #name').value = name;
-                document.querySelector('#productModal #price').value = parseFloat(price).toFixed(2);
+                document.querySelector('#productModal #price').value = parseFloat(price).toFixed(2); 
                 document.querySelector('#productModal #stock').value = stock;
                 document.querySelector('#productModal #category_id').value = categoryId;
                 

@@ -1,50 +1,18 @@
-{{-- 
-<div class="col-6 col-md-4 col-lg-3">
-    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-
-        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/600x400?text=No+Image' }}"
-             alt="{{ $product->name }}"
-             class="card-img-top" style="height:200px;object-fit:cover;">
-
-        <div class="card-body">
-            <small class="text-muted">{{ $product->category->name ?? '' }}</small>
-            <h5 class="card-title mb-1">{{ $product->name }}</h5>
-            <div class="fw-bold" style="color:#843f3f;">${{ number_format($product->price, 2) }}</div>
-            @if ($product->stock <= 0)
-                <small class="text-danger">Out of stock</small>
-            @endif
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center p-3 border-top">
-            <button type="button" class="btn btn-outline-danger rounded-circle favorite-btn"
-                    style="width:44px;height:44px;" data-product-id="{{ $product->id }}">
-                <i class="bi bi-heart"></i>
-            </button>
-
-            <form action="{{ route('cart.add') }}" method="POST" class="ms-3">
-                @csrf
-                <input type="hidden" name="product_id" value="{{ $product->id }}">
-                <input type="hidden" name="quantity" value="1">
-                @if ($product->stock > 0)
-                    <button type="submit" class="btn rounded-pill px-4 text-white" style="background:#843f3f;">
-                        <i class="bi bi-plus-lg me-1"></i> Add to Cart
-                    </button>
-                @else
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" disabled>Sold Out</button>
-                @endif
-            </form>
-        </div>
-    </div>
-</div> --}}
-
 {{-- One product card. No outer column wrapper: the grid in product-grid.blade.php sets the width. --}}
 @php
     $imageUrl = $product->image
         ? asset('storage/' . $product->image)
-        : 'https://placehold.co/600x400?text=No+Image';
+        : 'data:image/svg+xml;utf8,' . rawurlencode(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">'
+            . '<rect width="100%" height="100%" fill="#e9e9e9"/>'
+            . '<text x="50%" y="50%" fill="#999" font-family="sans-serif" font-size="28" '
+            . 'text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
+        );
     $soldOut = $product->stock <= 0;
 @endphp
 
+{{-- @once makes this <style> render a single time per page, not once per card --}}
+@once
 <style>
     .pc-card {
         display: flex; flex-direction: column; height: 100%;
@@ -80,9 +48,12 @@
     .pc-add:hover { background: #6a3232; }
     .pc-add:disabled { background: #b5b5b5; cursor: not-allowed; }
 </style>
+@endonce
 
 <div class="pc-card" data-category="{{ $product->category_id }}">
-    <img class="pc-img" src="{{ $imageUrl }}" alt="{{ $product->name }}">
+    <a href="{{ route('menu.show', $product) }}">
+        <img class="pc-img" src="{{ $imageUrl }}" alt="{{ $product->name }}" loading="lazy">
+    </a>
 
     <div class="pc-body">
         <div class="pc-cat">{{ $product->category->name ?? '' }}</div>
@@ -94,18 +65,22 @@
     </div>
 
     <div class="pc-actions">
-        <button type="button" class="pc-fav favorite-btn" data-product-id="{{ $product->id }}" aria-label="Add to favorites">
+        {{-- heart: filled when this product is in the customer's favorites --}}
+        @php $isFav = in_array($product->id, $favoriteIds ?? []); @endphp
+        <button type="button" class="pc-fav favorite-btn {{ $isFav ? 'active' : '' }}"
+                data-url="{{ route('favorites.toggle', $product) }}" aria-label="Add to favorites">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
         </button>
 
-        <form action="{{ route('cart.add') }}" method="POST" class="pc-add-form">
+        {{-- data-ajax-cart: cart-ajax.blade.php adds it without leaving the page --}}
+        <form action="{{ route('cart.add') }}" method="POST" class="pc-add-form" data-ajax-cart>
             @csrf
             <input type="hidden" name="product_id" value="{{ $product->id }}">
             <input type="hidden" name="quantity" value="1">
 
-            <button type="submit" class="pc-add" {{ $soldOut ? 'disabled' : '' }}>
+            <button type="submit" class="pc-add" @disabled($soldOut)>
                 @if ($soldOut)
                     Sold Out
                 @else

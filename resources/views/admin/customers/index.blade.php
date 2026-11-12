@@ -336,6 +336,6 @@
 
         // 3. Reset form when the modal is closed
         modal.addEventListener('hidden.bs.modal', resetForm);
-
+ 
     });
 </script>
